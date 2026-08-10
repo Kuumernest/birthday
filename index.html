@@ -3,73 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birthday Countdown</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>🎂 Happy 34th Birthday Kuum Ernest!</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden}
+html,body{width:100%;min-height:100vh;overflow-x:hidden}
 body{
   font-family:'Poppins',sans-serif;
-  background:#0a0010;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  background:linear-gradient(135deg,#0a0010 0%,#1a0030 50%,#0a0010 100%);
+  color:white;
+  position:relative;
 }
 
 /* STARS */
-.star{
-  position:fixed;
-  border-radius:50%;
-  background:white;
-  animation:twinkle var(--d) ease-in-out infinite;
-  opacity:0;
-}
-@keyframes twinkle{
-  0%,100%{opacity:0;transform:scale(0.5)}
-  50%{opacity:1;transform:scale(1.2)}
-}
+.star{position:fixed;border-radius:50%;background:white;animation:twinkle var(--d) ease-in-out infinite;opacity:0;z-index:1}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(0.5)}50%{opacity:1;transform:scale(1.2)}}
 
 /* ORBS */
-.orb{
-  position:fixed;
-  border-radius:50%;
-  filter:blur(80px);
-  opacity:0.3;
-  animation:drift var(--d) ease-in-out infinite alternate;
-}
-@keyframes drift{
-  from{transform:translate(0,0)}
-  to{transform:translate(var(--x),var(--y))}
-}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.3;animation:drift var(--d) ease-in-out infinite alternate;z-index:1}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(var(--x),var(--y))}}
 
-/* PARTICLES */
-.particle{
-  position:fixed;
-  border-radius:50%;
-  opacity:0;
-  animation:rise var(--d) linear infinite;
-}
-@keyframes rise{
-  0%{transform:translateY(100vh);opacity:0}
-  10%{opacity:0.8}
-  90%{opacity:0.4}
-  100%{transform:translateY(-10vh);opacity:0}
-}
+/* BALLOONS */
+.balloon{position:fixed;font-size:2.5rem;animation:floatUp var(--d) linear infinite;opacity:0;z-index:2;pointer-events:none}
+@keyframes floatUp{0%{transform:translateY(110vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-20vh) rotate(360deg);opacity:0}}
 
-/* SCREENS */
-#countdown-screen,#birthday-screen{
-  position:fixed;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+/* CONTAINER */
+.container{
+  position:relative;
+  z-index:10;
+  max-width:600px;
+  margin:0 auto;
   padding:2rem 1.5rem;
+  text-align:center;
 }
-#birthday-screen{display:none}
 
-/* GLASS CARD */
+/* GLASS */
 .glass{
   background:rgba(255,255,255,0.06);
   backdrop-filter:blur(24px);
@@ -77,92 +45,57 @@ body{
   border:1px solid rgba(255,255,255,0.12);
   border-radius:2rem;
   box-shadow:0 25px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15);
-}
-
-/* FLOATING EMOJI */
-.float{
-  display:inline-block;
-  animation:floatUD 4s ease-in-out infinite;
-}
-@keyframes floatUD{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
-}
-
-/* GLOW LINE */
-.glow-line{
-  width:60px;height:2px;
-  background:linear-gradient(90deg,transparent,#ffd700,transparent);
-  border-radius:99px;
-  margin:0 auto;
-}
-
-/* DIGITS */
-.digit-row{
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  gap:0.5rem;
+  padding:1.5rem;
   margin-bottom:1.5rem;
 }
-.digit-block{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:0.25rem;
-}
-.digit{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(3.5rem,15vw,6rem);
-  font-weight:700;
-  line-height:1;
-  background:linear-gradient(135deg,#ffd700,#ff69b4,#c084fc);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-  filter:drop-shadow(0 0 20px rgba(255,215,0,0.4));
-}
-.digit-label{
-  font-size:0.6rem;
-  letter-spacing:0.3em;
-  color:rgba(255,255,255,0.4);
-  text-transform:uppercase;
-}
-.sep{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(3rem,12vw,5rem);
-  font-weight:700;
-  background:linear-gradient(135deg,#ffd700,#ff69b4);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-  align-self:flex-start;
-  margin-top:0.3rem;
-  animation:blink 1s ease-in-out infinite;
-}
-@keyframes blink{
-  0%,100%{opacity:1}
-  50%{opacity:0.2}
-}
 
-/* PROGRESS BAR */
-.progress-track{
-  width:100%;height:3px;
-  background:rgba(255,255,255,0.1);
-  border-radius:99px;
-  overflow:hidden;
+/* PHOTO FRAME */
+.photo-frame{
+  position:relative;
+  width:220px;
+  height:220px;
+  margin:0 auto 1.5rem;
+  border-radius:50%;
+  padding:8px;
+  background:linear-gradient(135deg,#ffd700,#ff69b4,#c084fc,#ffd700);
+  background-size:300% 300%;
+  animation:goldShimmer 3s ease infinite;
+  box-shadow:0 0 60px rgba(255,215,0,0.6);
 }
-.progress-fill{
+@keyframes goldShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.photo-frame img{
+  width:100%;
   height:100%;
-  background:linear-gradient(90deg,#ffd700,#ff69b4,#c084fc);
-  border-radius:99px;
-  transition:width 1s linear;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid #0a0010;
 }
+.crown{
+  position:absolute;
+  top:-30px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:3rem;
+  animation:crownBounce 2s ease-in-out infinite;
+}
+@keyframes crownBounce{0%,100%{transform:translateX(-50%) translateY(0) rotate(-5deg)}50%{transform:translateX(-50%) translateY(-8px) rotate(5deg)}}
 
-/* BIRTHDAY SCREEN */
-.birthday-title{
+/* TITLE */
+.age-badge{
+  display:inline-block;
+  background:linear-gradient(135deg,#ffd700,#ff69b4);
+  color:#0a0010;
+  font-weight:700;
+  padding:0.4rem 1.2rem;
+  border-radius:99px;
+  font-size:0.9rem;
+  letter-spacing:0.2em;
+  margin-bottom:1rem;
+  box-shadow:0 5px 20px rgba(255,215,0,0.4);
+}
+.hbd-title{
   font-family:'Playfair Display',serif;
-  font-size:clamp(3rem,16vw,7rem);
+  font-size:clamp(2.5rem,10vw,4.5rem);
   font-weight:700;
   font-style:italic;
   background:linear-gradient(135deg,#ffd700,#ff69b4,#c084fc,#ffd700);
@@ -170,97 +103,236 @@ body{
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
-  animation:shimmer 3s ease infinite;
-  line-height:1.1;
+  animation:goldShimmer 3s ease infinite;
+  line-height:1;
+  margin-bottom:0.5rem;
 }
-@keyframes shimmer{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
+.name-title{
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(2rem,8vw,3.5rem);
+  color:#ffd700;
+  text-shadow:0 0 30px rgba(255,215,0,0.6);
+  margin-bottom:1rem;
+}
+.subtitle{
+  font-size:0.9rem;
+  letter-spacing:0.3em;
+  color:rgba(255,255,255,0.6);
+  text-transform:uppercase;
+  margin-bottom:1rem;
+}
+
+/* GLOW LINE */
+.glow-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,#ffd700,transparent);border-radius:99px;margin:1rem auto}
+
+/* SECTION TITLE */
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.5rem;
+  font-weight:700;
+  color:#ffd700;
+  margin-bottom:1rem;
+}
+
+/* WISH BOX */
+.wish-input{
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:1rem;
+  padding:0.8rem 1rem;
+  color:white;
+  font-family:inherit;
+  font-size:0.9rem;
+  margin-bottom:0.5rem;
+  outline:none;
+}
+.wish-input:focus{border-color:#ffd700;box-shadow:0 0 20px rgba(255,215,0,0.3)}
+.wish-input::placeholder{color:rgba(255,255,255,0.4)}
+
+.btn{
+  background:linear-gradient(135deg,#ffd700,#ff69b4);
+  color:#0a0010;
+  font-weight:700;
+  padding:0.7rem 1.5rem;
+  border:none;
+  border-radius:99px;
+  cursor:pointer;
+  font-size:0.9rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  box-shadow:0 5px 20px rgba(255,215,0,0.4);
+  transition:transform 0.2s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+
+.wishes-list{
+  max-height:300px;
+  overflow-y:auto;
+  margin-top:1rem;
+  text-align:left;
+}
+.wish-item{
+  background:rgba(255,255,255,0.05);
+  border-left:3px solid #ffd700;
+  border-radius:0.5rem;
+  padding:0.8rem 1rem;
+  margin-bottom:0.5rem;
+  animation:slideIn 0.5s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+.wish-author{color:#ffd700;font-weight:600;font-size:0.85rem;margin-bottom:0.2rem}
+.wish-text{color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.5}
+
+/* QUIZ */
+.quiz-question{
+  font-size:1rem;
+  font-weight:600;
+  color:white;
+  margin-bottom:1rem;
+}
+.quiz-option{
+  display:block;
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:0.75rem;
+  padding:0.75rem 1rem;
+  color:white;
+  margin-bottom:0.5rem;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:0.9rem;
+  text-align:left;
+  transition:all 0.2s;
+}
+.quiz-option:hover{background:rgba(255,215,0,0.1);border-color:#ffd700}
+.quiz-option.correct{background:rgba(52,211,153,0.2);border-color:#34d399}
+.quiz-option.wrong{background:rgba(239,68,68,0.2);border-color:#ef4444}
+.quiz-progress{color:rgba(255,255,255,0.5);font-size:0.8rem;margin-bottom:0.5rem}
+
+/* MUSIC BUTTON */
+.music-btn{
+  position:fixed;
+  top:1rem;
+  right:1rem;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.2);
+  color:white;
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:1.2rem;
+  z-index:100;
+  transition:transform 0.2s;
+}
+.music-btn:hover{transform:scale(1.1)}
+
+/* SHARE */
+.share-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  color:white;
+  font-weight:600;
+  padding:0.8rem 1.5rem;
+  border:none;
+  border-radius:99px;
+  cursor:pointer;
+  font-size:0.9rem;
+  text-decoration:none;
+  margin-top:1rem;
 }
 </style>
 </head>
 <body>
 
-<!-- COUNTDOWN SCREEN -->
-<div id="countdown-screen">
+<!-- MUSIC BUTTON -->
+<button class="music-btn" id="musicBtn" title="Toggle Music">🔇</button>
 
-  <div style="margin-bottom:1.5rem">
-    <div style="font-size:3rem;margin-bottom:0.5rem">
-      <span class="float" style="animation-delay:0s">🎂</span>
-      <span class="float" style="animation-delay:0.4s">✨</span>
-      <span class="float" style="animation-delay:0.8s">🎈</span>
+<div class="container">
+
+  <!-- HERO SECTION -->
+  <div style="padding-top:2rem">
+    <div class="photo-frame">
+      <div class="crown">👑</div>
+      <img src="https://i.postimg.cc/kgzYVZgb/Whats-App-Image-2026-08-11-at-12-24-52-AM.jpg" alt="Kuum Ernest">
     </div>
-    <div class="glow-line" style="margin-bottom:0.75rem"></div>
-    <p style="font-size:0.6rem;letter-spacing:0.4em;color:rgba(255,255,255,0.3);text-transform:uppercase">
-      something special is coming
-    </p>
+    
+    <div class="age-badge">✨ 34 YEARS OF EXCELLENCE ✨</div>
+    
+    <h1 class="hbd-title">Happy<br>Birthday</h1>
+    <div class="name-title">Kuum Ernest</div>
+    <div class="glow-line"></div>
+    <p class="subtitle">🎂 Today is my special day 🎂</p>
   </div>
 
-  <h1 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,8vw,3rem);font-weight:700;color:white;line-height:1.2;margin-bottom:0.4rem">
-    My Birthday
-  </h1>
-  <p style="font-size:clamp(0.7rem,3vw,0.9rem);color:rgba(255,255,255,0.4);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1.5rem">
-    is almost here
-  </p>
-
-  <div class="glass" style="padding:2rem 2.5rem;margin-bottom:1.5rem;width:100%;max-width:380px">
-    <div class="digit-row">
-      <div class="digit-block">
-        <div class="digit" id="hh">00</div>
-        <div class="digit-label">hours</div>
-      </div>
-      <div class="sep">:</div>
-      <div class="digit-block">
-        <div class="digit" id="mm">00</div>
-        <div class="digit-label">minutes</div>
-      </div>
-      <div class="sep">:</div>
-      <div class="digit-block">
-        <div class="digit" id="ss">00</div>
-        <div class="digit-label">seconds</div>
-      </div>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="bar" style="width:0%"></div>
-    </div>
-    <p style="font-size:0.6rem;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-top:0.75rem">
-      counting down to midnight
+  <!-- MESSAGE -->
+  <div class="glass">
+    <p style="font-size:1rem;line-height:1.8;color:rgba(255,255,255,0.85);font-style:italic">
+      "Another year older, wiser, and blessed. 
+      Thank you for being part of my journey. 
+      Today, I celebrate <span style="color:#ffd700;font-weight:600">34 years of life</span>, 
+      love, and endless possibilities." 
     </p>
+    <div class="glow-line"></div>
+    <p style="font-family:'Dancing Script',cursive;font-size:1.5rem;color:#ffd700">- Kuum Ernest</p>
   </div>
 
-  <div class="glass" style="padding:1rem 1.5rem;max-width:340px">
-    <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);line-height:1.7">
-      At midnight this page will automatically transform into a
-      <span style="color:#ffd700;font-weight:600">birthday celebration</span> 🎉
-    </p>
+  <!-- WISH COLLECTOR -->
+  <div class="glass">
+    <div class="section-title">🎁 Leave Me a Birthday Wish</div>
+    <input type="text" class="wish-input" id="nameInput" placeholder="Your name">
+    <textarea class="wish-input" id="wishInput" placeholder="Type your birthday wish..." rows="3"></textarea>
+    <button class="btn" onclick="addWish()">Send Wish 💌</button>
+    <div class="wishes-list" id="wishesList"></div>
   </div>
 
-  <div style="margin-top:1.5rem;font-size:1.2rem;opacity:0.25">🌙 ⭐ 🌙</div>
+  <!-- QUIZ -->
+  <div class="glass">
+    <div class="section-title">🎮 How Well Do You Know Me?</div>
+    <div class="quiz-progress" id="quizProgress">Question 1 of 5</div>
+    <div class="quiz-question" id="quizQuestion"></div>
+    <div id="quizOptions"></div>
+    <div id="quizResult" style="display:none;text-align:center;padding:1rem">
+      <div style="font-size:3rem;margin-bottom:0.5rem">🏆</div>
+      <div style="font-size:1.5rem;color:#ffd700;font-weight:700" id="scoreText"></div>
+      <button class="btn" onclick="restartQuiz()" style="margin-top:1rem">Play Again 🔄</button>
+    </div>
+  </div>
+
+  <!-- SHARE -->
+  <div class="glass" style="text-align:center">
+    <div class="section-title">🎉 Share the Celebration</div>
+    <p style="color:rgba(255,255,255,0.6);font-size:0.9rem;margin-bottom:1rem">
+      Send this page to friends and family!
+    </p>
+    <a href="https://wa.me/?text=🎂%20It's%20Kuum%20Ernest's%2034th%20Birthday!%20Come%20celebrate!%20" target="_blank" class="share-btn">
+      📱 Share on WhatsApp
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="text-align:center;padding:2rem 0;color:rgba(255,255,255,0.4);font-size:0.85rem">
+    Made with 💛 for Kuum Ernest<br>
+    🎂 Cheers to 34! 🥂
+  </div>
 
 </div>
 
-<!-- BIRTHDAY SCREEN -->
-<div id="birthday-screen">
-  <div style="font-size:4rem;margin-bottom:1.5rem">🎉🥳🎉</div>
-  <div class="birthday-title">Happy<br>Birthday<br>To Me</div>
-  <div style="margin:1.5rem 0"><div class="glow-line"></div></div>
-  <p style="font-size:clamp(0.8rem,4vw,1.2rem);font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:2rem">
-    Today is my day ✨
-  </p>
-  <div class="glass" style="padding:1.2rem 2rem;max-width:320px">
-    <p style="font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.8">
-      🎂 Cake &nbsp;•&nbsp; Candles &nbsp;•&nbsp; Wishes<br>
-      🥂 Celebration begins now
-    </p>
-  </div>
-  <div style="margin-top:2rem;font-size:3rem">🎈 🎁 🎈</div>
-</div>
+<!-- MUSIC (Happy Birthday) -->
+<audio id="bgMusic" loop>
+  <source src="https://www.soundjay.com/misc/sounds/magic-chime-02.mp3" type="audio/mpeg">
+</audio>
 
-<script async defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script>
 // STARS
-for(let i=0;i<120;i++){
+for(let i=0;i<100;i++){
   const s=document.createElement('div');
   s.className='star';
   const sz=Math.random()*2.5+0.5;
@@ -276,68 +348,133 @@ for(let i=0;i<120;i++){
   document.body.appendChild(o);
 });
 
-// PARTICLES
-['#ffd700','#ff69b4','#c084fc','#60a5fa','#34d399'].forEach((c,i)=>{
-  for(let j=0;j<5;j++){
-    const p=document.createElement('div');
-    p.className='particle';
-    const sz=Math.random()*6+3;
-    p.style.cssText=`width:${sz}px;height:${sz}px;background:${c};left:${Math.random()*100}%;--d:${(Math.random()*8+6).toFixed(1)}s;animation-delay:${(Math.random()*8).toFixed(1)}s`;
-    document.body.appendChild(p);
-  }
-});
-
-// COUNTDOWN
-const hEl=document.getElementById('hh');
-const mEl=document.getElementById('mm');
-const sEl=document.getElementById('ss');
-const bar=document.getElementById('bar');
-
-function midnight(){
-  const n=new Date();
-  const m=new Date(n);
-  m.setHours(24,0,0,0);
-  return m;
+// FLOATING BALLOONS
+const balloonEmojis=['🎈','🎂','🎁','🥳','🎉','⭐','✨','🎊'];
+for(let i=0;i<15;i++){
+  const b=document.createElement('div');
+  b.className='balloon';
+  b.textContent=balloonEmojis[Math.floor(Math.random()*balloonEmojis.length)];
+  b.style.cssText=`left:${Math.random()*100}%;--d:${(Math.random()*10+8).toFixed(1)}s;animation-delay:${(Math.random()*10).toFixed(1)}s`;
+  document.body.appendChild(b);
 }
 
-const target=midnight();
-const total=(target-new Date())/1000;
-
-function pad(n){return String(n).padStart(2,'0')}
-
-function tick(){
-  const now=new Date();
-  const diff=target-now;
-  if(diff<=0){showBirthday();return}
-  const h=Math.floor(diff/3600000);
-  const m=Math.floor((diff%3600000)/60000);
-  const s=Math.floor((diff%60000)/1000);
-  hEl.textContent=pad(h);
-  mEl.textContent=pad(m);
-  sEl.textContent=pad(s);
-  const elapsed=total-diff/1000;
-  bar.style.width=Math.min(100,(elapsed/total)*100)+'%';
-}
-
-function showBirthday(){
-  clearInterval(timer);
-  document.getElementById('countdown-screen').style.display='none';
-  document.getElementById('birthday-screen').style.display='flex';
+// CONFETTI ON LOAD
+window.addEventListener('load',()=>{
   const colors=['#ffd700','#ff69b4','#c084fc','#60a5fa','#34d399','#f97316'];
-  const end=Date.now()+10000;
+  const end=Date.now()+5000;
   (function burst(){
-    if(typeof confetti !== 'undefined'){
-      confetti({particleCount:10,angle:60,spread:70,origin:{x:0},colors});
-      confetti({particleCount:10,angle:120,spread:70,origin:{x:1},colors});
-      confetti({particleCount:6,angle:90,spread:45,origin:{x:0.5},colors});
-    }
+    confetti({particleCount:8,angle:60,spread:70,origin:{x:0},colors});
+    confetti({particleCount:8,angle:120,spread:70,origin:{x:1},colors});
     if(Date.now()<end)requestAnimationFrame(burst);
   })();
+});
+
+// CONFETTI EVERY 15 SECONDS
+setInterval(()=>{
+  const colors=['#ffd700','#ff69b4','#c084fc'];
+  confetti({particleCount:50,spread:80,origin:{y:0.6},colors});
+},15000);
+
+// WISHES
+let wishes=JSON.parse(localStorage.getItem('birthdayWishes')||'[]');
+
+function renderWishes(){
+  const list=document.getElementById('wishesList');
+  if(wishes.length===0){
+    list.innerHTML='<p style="color:rgba(255,255,255,0.4);text-align:center;padding:1rem;font-size:0.85rem">Be the first to leave a wish! 💛</p>';
+    return;
+  }
+  list.innerHTML=wishes.slice().reverse().map(w=>`
+    <div class="wish-item">
+      <div class="wish-author">💌 ${w.name}</div>
+      <div class="wish-text">${w.text}</div>
+    </div>
+  `).join('');
 }
 
-tick();
-const timer=setInterval(tick,1000);
-setInterval(()=>{if(new Date()>=target)showBirthday()},30000);
+function addWish(){
+  const name=document.getElementById('nameInput').value.trim();
+  const text=document.getElementById('wishInput').value.trim();
+  if(!name||!text){alert('Please enter your name and wish!');return}
+  wishes.push({name,text,date:Date.now()});
+  localStorage.setItem('birthdayWishes',JSON.stringify(wishes));
+  document.getElementById('nameInput').value='';
+  document.getElementById('wishInput').value='';
+  renderWishes();
+  // Confetti burst
+  confetti({particleCount:100,spread:70,origin:{y:0.7},colors:['#ffd700','#ff69b4']});
+}
+
+renderWishes();
+
+// QUIZ
+const quizData=[
+  {q:"How old is Kuum Ernest today?",options:["32","33","34","35"],correct:2},
+  {q:"What is Kuum Ernest's favorite way to celebrate?",options:["Quiet dinner","Big party","Traveling","With family"],correct:3},
+  {q:"Which word best describes Kuum?",options:["Boring","Legendary","Average","Shy"],correct:1},
+  {q:"What is the best gift for Kuum?",options:["Money","Love & respect","A car","Chocolate"],correct:1},
+  {q:"How many candles on the cake?",options:["30","32","34","40"],correct:2}
+];
+
+let currentQ=0,score=0;
+
+function loadQuiz(){
+  if(currentQ>=quizData.length){
+    document.getElementById('quizQuestion').style.display='none';
+    document.getElementById('quizOptions').style.display='none';
+    document.getElementById('quizProgress').style.display='none';
+    document.getElementById('quizResult').style.display='block';
+    document.getElementById('scoreText').textContent=`You scored ${score}/${quizData.length}!`;
+    if(score===quizData.length){
+      confetti({particleCount:200,spread:100,origin:{y:0.5}});
+    }
+    return;
+  }
+  document.getElementById('quizProgress').textContent=`Question ${currentQ+1} of ${quizData.length}`;
+  document.getElementById('quizQuestion').textContent=quizData[currentQ].q;
+  const opts=document.getElementById('quizOptions');
+  opts.innerHTML='';
+  quizData[currentQ].options.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='quiz-option';
+    btn.textContent=opt;
+    btn.onclick=()=>answerQuiz(i,btn);
+    opts.appendChild(btn);
+  });
+}
+
+function answerQuiz(i,btn){
+  const correct=quizData[currentQ].correct;
+  const all=document.querySelectorAll('.quiz-option');
+  all.forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===correct)b.classList.add('correct');
+    if(idx===i&&i!==correct)b.classList.add('wrong');
+  });
+  if(i===correct)score++;
+  setTimeout(()=>{currentQ++;loadQuiz()},1500);
+}
+
+function restartQuiz(){
+  currentQ=0;score=0;
+  document.getElementById('quizQuestion').style.display='block';
+  document.getElementById('quizOptions').style.display='block';
+  document.getElementById('quizProgress').style.display='block';
+  document.getElementById('quizResult').style.display='none';
+  loadQuiz();
+}
+
+loadQuiz();
+
+// MUSIC
+const music=document.getElementById('bgMusic');
+const musicBtn=document.getElementById('musicBtn');
+let playing=false;
+musicBtn.onclick=()=>{
+  if(playing){music.pause();musicBtn.textContent='🔇'}
+  else{music.play().catch(()=>{});musicBtn.textContent='🔊'}
+  playing=!playing;
+};
 </script>
 </body>
 </html>
