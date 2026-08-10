@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🎂 My Birthday Countdown</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0a0010;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Animated starfield ── */
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      animation: twinkle var(--dur) ease-in-out infinite;
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50%       { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* ── Floating orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: drift var(--dur) ease-in-out infinite alternate;
+      z-index: 0;
+      opacity: 0.35;
+    }
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(var(--tx), var(--ty)) scale(1.15); }
+    }
+
+    /* ── Particles ── */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      animation: rise var(--dur) linear infinite;
+      opacity: 0;
+      z-index: 0;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(100vh) scale(0);   opacity: 0; }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.4; }
+      100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+    }
+
+    /* ── Main content ── */
+    #app {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    /* ── Glass card ── */
+    .glass {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 2rem;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.05),
+        0 25px 60px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    /* ── Countdown digits ── */
+    .digit-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .digit {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 15vw, 6rem);
+      font-weight: 700;
+      line-height: 1;
+      background: linear-gradient(135deg, #ffd700, #ff69b4, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 20px rgba(255,215,0,0.4));
+      transition: all 0.3s ease;
+    }
+    .digit-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+    }
+    .separator {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 12vw, 5rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffd700, #ff69b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      align-self: flex-start;
+      margin-top: 0.3rem;
+      animation: blink 1s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
+    }
+
+    /* ── Top emoji float ── */
+    .emoji-float {
+      animation: floatUpDown 4s ease-in-out infinite;
+      display: inline-block;
+    }
+    @keyframes floatUpDown {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+
+    /* ── Pulse ring ── */
+    .pulse-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,215,0,0.4);
+      animation: pulseRing 2s ease-out infinite;
+    }
+    @keyframes pulseRing {
+      0%   { transform: scale(1);   opacity: 0.8; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* ── Birthday screen ── */
+    #birthday-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #1a0030, #3d0050, #1a0030);
+    }
+    #birthday-screen.show {
+      display: flex;
+    }
+    .birthday-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 16vw, 7rem);
+      font-weight: 700;
+      font-style: italic;
+      background: linear-gradient(135deg, #ffd700, #ff69b4, #c084fc, #ffd700);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease infinite;
+      line-height: 1.1;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .birthday-sub {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1rem, 5vw, 1.6rem);
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* ── Progress bar ── */
+    .progress-track {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffd700, #ff69b4, #c084fc);
+      border-radius: 99px;
+      transition: width 1s linear;
+    }
+
+    /* ── Glow line ── */
+    .glow-line {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ffd700, transparent);
+      border-radius: 99px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Starfield -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Countdown Screen -->
+  <div id="app">
+
+    <!-- Top decoration -->
+    <div class="mb-6">
+      <div class="text-5xl mb-2">
+        <span class="emoji-float" style="animation-delay:0s">🎂</span>
+        <span class="emoji-float" style="animation-delay:0.4s">✨</span>
+        <span class="emoji-float" style="animation-delay:0.8s">🎈</span>
+      </div>
+      <div class="glow-line mb-3"></div>
+      <p style="font-family:'Poppins',sans-serif; font-size:0.65rem; letter-spacing:0.4em; color:rgba(255,255,255,0.35); text-transform:uppercase;">
+        something special is coming
+      </p>
+    </div>
+
+    <!-- Main title -->
+    <h1 style="font-family:'Playfair Display',serif; font-size:clamp(1.8rem,8vw,3rem); font-weight:700; color:white; line-height:1.2; margin-bottom:0.5rem;">
+      My Birthday
+    </h1>
+    <p style="font-size:clamp(0.75rem,3vw,1rem); color:rgba(255,255,255,0.45); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:2rem;">
+      is almost here
+    </p>
+
+    <!-- Glass countdown card -->
+    <div class="glass" style="padding: 2rem 2.5rem; margin-bottom: 2rem; width: 100%; max-width: 380px;">
+
+      <!-- Digits row -->
+      <div style="display:flex; align-items:flex-start; justify-content:center; gap:0.5rem; margin-bottom:1.5rem;">
+
+        <div class="digit-block">
+          <div class="digit" id="hours">00</div>
+          <div class="digit-label">hours</div>
+        </div>
+
+        <div class="separator">:</div>
+
+        <div class="digit-block">
+          <div class="digit" id="minutes">00</div>
+          <div class="digit-label">minutes</div>
+        </div>
+
+        <div class="separator">:</div>
+
+        <div class="digit-block">
+          <div class="digit" id="seconds">00</div>
+          <div class="digit-label">seconds</div>
+        </div>
+
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-track">
+        <div class="progress-fill" id="progress" style="width:0%"></div>
+      </div>
+
+      <p style="font-size:0.65rem; letter-spacing:0.25em; color:rgba(255,255,255,0.3); text-transform:uppercase; margin-top:0.75rem;">
+        counting down to midnight
+      </p>
+
+    </div>
+
+    <!-- Bottom message -->
+    <div class="glass" style="padding:1rem 1.5rem; max-width:340px;">
+      <p style="font-size:0.8rem; color:rgba(255,255,255,0.5); line-height:1.7;">
+        At midnight this page will automatically transform into a
+        <span style="color:#ffd700; font-weight:600;">birthday celebration</span> 🎉
+      </p>
+    </div>
+
+    <!-- Bottom emoji -->
+    <div style="margin-top:2rem; font-size:1.5rem; opacity:0.3;">
+      🌙 &nbsp; ⭐ &nbsp; 🌙
+    </div>
+
+  </div>
+
+  <!-- Birthday Screen -->
+  <div id="birthday-screen">
+    <div style="margin-bottom:1.5rem; font-size:4rem;">
+      🎉🥳🎉
+    </div>
+
+    <div class="birthday-title">
+      Happy<br>Birthday<br>To Me
+    </div>
+
+    <div style="margin: 1.5rem 0;">
+      <div class="glow-line"></div>
+    </div>
+
+    <p class="birthday-sub" style="margin-bottom:2rem;">
+      Today is my day ✨
+    </p>
+
+    <div class="glass" style="padding:1.2rem 2rem; max-width:320px;">
+      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); line-height:1.8;">
+        🎂 &nbsp; Cake &nbsp;•&nbsp; Candles &nbsp;•&nbsp; Wishes<br>
+        🥂 &nbsp; Celebration begins now
+      </p>
+    </div>
+
+    <div style="margin-top:2.5rem; font-size:3rem;">
+      🎈 &nbsp; 🎁 &nbsp; 🎈
+    </div>
+  </div>
+
+
+  <script>
+    // ── Create stars ──────────────────────────────────────────
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 120; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      const size = Math.random() * 2.5 + 0.5;
+      star.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        --dur:${(Math.random()*3+2).toFixed(1)}s;
+        animation-delay:${(Math.random()*4).toFixed(1)}s;
+      `;
+      starsContainer.appendChild(star);
+    }
+
+    // ── Create floating orbs ──────────────────────────────────
+    const orbColors = ['#7c3aed','#db2777','#f59e0b','#0ea5e9'];
+    orbColors.forEach((color, i) => {
+      const orb = document.createElement('div');
+      orb.className = 'orb';
+      orb.style.cssText = `
+        width:${200+i*60}px; height:${200+i*60}px;
+        background:${color};
+        left:${[10,60,5,70][i]}%;
+        top:${[10,60,80,20][i]}%;
+        --dur:${8+i*2}s;
+        --tx:${(Math.random()*60-30).toFixed(0)}px;
+        --ty:${(Math.random()*60-30).toFixed(0)}px;
+        animation-delay:${i*1.5}s;
+      `;
+      document.body.appendChild(orb);
+    });
+
+    // ── Create rising particles ───────────────────────────────
+    const particleColors = ['#ffd700','#ff69b4','#c084fc','#60a5fa','#34d399'];
+    for (let i = 0; i < 25; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 6 + 3;
+      p.style.cssText = `
+        width:${size}px; height:${size}px;
+        background:${particleColors[Math.floor(Math.random()*particleColors.length)]};
+        left:${Math.random()*100}%;
+        --dur:${(Math.random()*8+6).toFixed(1)}s;
+        animation-delay:${(Math.random()*8).toFixed(1)}s;
+      `;
+      document.body.appendChild(p);
+    }
+
+    // ── Countdown logic ───────────────────────────────────────
+    const hoursEl    = document.getElementById('hours');
+    const minutesEl  = document.getElementById('minutes');
+    const secondsEl  = document.getElementById('seconds');
+    const progressEl = document.getElementById('progress');
+
+    function getMidnight() {
+      const now = new Date();
+      const midnight = new Date(now);
+      midnight.setHours(24, 0, 0, 0);
+      return midnight;
+    }
+
+    const midnight   = getMidnight();
+    const totalSecs  = (midnight - new Date()) / 1000;
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function tick() {
+      const now  = new Date();
+      const diff = midnight - now;
+
+      if (diff <= 0) {
+        triggerBirthday();
+        return;
+      }
+
+      const h = Math.floor(diff / 3_600_000);
+      const m = Math.floor((diff % 3_600_000) / 60_000);
+      const s = Math.floor((diff % 60_000) / 1000);
+
+      hoursEl.textContent   = pad(h);
+      minutesEl.textContent = pad(m);
+      secondsEl.textContent = pad(s);
+
+      // Progress bar (how much of the day has passed)
+      const elapsed = totalSecs - diff / 1000;
+      const pct = Math.min(100, (elapsed / totalSecs) * 100);
+      progressEl.style.width = pct + '%';
+    }
+
+    tick();
+    const timer = setInterval(tick, 1000);
+
+    // ── Birthday trigger ──────────────────────────────────────
+    function triggerBirthday() {
+      clearInterval(timer);
+
+      document.getElementById('app').style.display = 'none';
+      const bd = document.getElementById('birthday-screen');
+      bd.classList.add('show');
+
+      // Confetti burst
+      const colors = ['#ffd700','#ff69b4','#c084fc','#60a5fa','#34d399','#f97316'];
+      const end = Date.now() + 10_000;
+
+      (function burst() {
+        confetti({ particleCount: 10, angle: 60,  spread: 70, origin: { x: 0 },   colors });
+        confetti({ particleCount: 10, angle: 120, spread: 70, origin: { x: 1 },   colors });
+        confetti({ particleCount: 6,  angle: 90,  spread: 45, origin: { x: 0.5 }, colors });
+        if (Date.now() < end) requestAnimationFrame(burst);
+      })();
+    }
+
+    // Safety check every 30s in case tab was inactive
+    setInterval(() => {
+      if (new Date() >= midnight) triggerBirthday();
+    }, 30_000);
+  </script>
+</body>
+</html>
